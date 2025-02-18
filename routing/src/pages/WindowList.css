@@ -1,129 +1,129 @@
-/* WindowList.css */
-
-/* General container styles */
+/* General container for the Window List */
 .windowlist-container {
   padding: 20px;
-  background-color: #f4f7fa;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  max-width: 900px;
-  margin: 20px auto;
+  font-family: Arial, sans-serif;
 }
 
 .windowh1 {
-  font-size: 2rem;
-  font-weight: 600;
+  text-align: center;
   margin-bottom: 20px;
-  color: #333;
 }
 
+/* Style for the Add Window button, positioned on the right side */
 .addWindow {
-  background-color: #4CAF50;
-  color: white;
-  font-size: 16px;
+  display: block;
+  margin-left: auto;
+  margin-right: 20px; /* Space from the right edge */
   padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
+  font-size: 16px;
   cursor: pointer;
-  margin-bottom: 20px;
+  background-color: #2e2e33;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
 .addWindow:hover {
-  background-color: #45a049;
+  background-color: #35393b;
 }
 
+/* Table styling */
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
 }
 
-table th, table td {
-  padding: 12px;
-  text-align: left;
+table, th, td {
   border: 1px solid #ddd;
 }
 
-table th {
-  background-color: #f1f1f1;
-  font-weight: bold;
+th, td {
+  padding: 10px;
+  text-align: left;
 }
 
-table tr:nth-child(even) {
-  background-color: #f9f9f9;
+th {
+  background-color: #f2f2f2;
 }
 
-table tr:hover {
-  background-color: #f1f1f1;
-}
-
-/* Modal Styles */
+/* Modal container styling */
 .modal {
-  background-color: #fff;
-  border-radius: 8px;
   padding: 20px;
-  width: 400px;
-  max-width: 100%;
-  margin: auto;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  background-color: white;
+  max-width: 400px; /* Limit the width of the modal */
+  margin: 0 auto; /* Center the modal */
 }
 
 .overlay {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  font-weight: bold;
-  margin-bottom: 5px;
-  display: block;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 8px;
-  font-size: 16px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: #4CAF50;
-}
-
-.modal-actions {
+/* Styling for Yes/No buttons inside modals (both add and delete) */
+.modal div {
   display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
+  justify-content: center; /* Center the buttons horizontally */
+  gap: 20px; /* Space between the buttons */
 }
 
-.modal-actions button {
+.modal button {
   padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
   font-size: 16px;
   cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
-.yes {
+/* Yes button (Green) */
+.modal button.yes {
   background-color: #4CAF50;
   color: white;
 }
 
-.yes:hover {
+.modal button.yes:hover {
   background-color: #45a049;
 }
 
-.no {
+/* No button (Red) */
+.modal button.no {
   background-color: #f44336;
   color: white;
 }
 
-.no:hover {
+.modal button.no:hover {
   background-color: #e53935;
+}
+
+/* Styling for the navbar (optional) */
+.navbar-container {
+  padding: 10px;
+  background-color: #333;
+}
+
+.navbar {
+  display: flex;
+  justify-content: center;
+}
+
+.navbar a {
+  color: white;
+  padding: 10px;
+  text-decoration: none;
+  margin: 0 15px;
+  font-size: 18px;
+}
+
+.navbar a:hover {
+  background-color: #575757;
+  border-radius: 5px;
+}
+
+.cashier-admin {
+  color: white;
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 10px;
 }
