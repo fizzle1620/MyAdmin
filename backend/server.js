@@ -1,81 +1,87 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
 const mysql = require('mysql');
+const cors = require('cors');
+const bodyParser = require('body-parser');
 
 const app = express();
-const PORT = 5000;
+const port = 5000;
+
+// MySQL database connection
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',  // Change this to your MySQL username
+  password: '',  // Change this to your MySQL password
+  database: 'window_db',  // Use the database you created
+});
+
+db.connect((err) => {
+  if (err) {
+    console.error('Error connecting to MySQL:', err.stack);
+    return;
+  }
+  console.log('Connected to MySQL');
+});
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
-// MySQL connection (adjust with your XAMPP settings)
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '', // Default password is blank in XAMPP
-  database: 'window_management',
-});
-
-// Connect to MySQL
-db.connect((err) => {
-  if (err) {
-    console.error('Database connection failed:', err);
-    return;
-  }
-  console.log('Connected to MySQL database!');
-});
-
-// API Endpoints
-// 1. Get all windows
-app.get('/api/windows', (req, res) => {
-  db.query('SELECT * FROM windows', (err, results) => {
-    if (err) throw err;
-    res.json(results);
+// Get all accounts
+app.get('/api/accounts', (req, res) => {
+  db.query('SELECT * FROM accounts', (err, result) => {
+    if (err) {
+      console.error('Error fetching accounts:', err);
+      return res.status(500).send('Error fetching accounts');
+    }
+    res.json(result);
   });
 });
 
-// 2. Add a new window
-app.post('/api/windows', (req, res) => {
-  const { name, status } = req.body;
-  const query = 'INSERT INTO windows (name, status) VALUES (?, ?)';
-  db.query(query, [name, status], (err, result) => {
-    if (err) throw err;
-    res.status(201).json({ id: result.insertId, name, status });
+// Add new account
+app.post('/api/accounts', (req, res) => {
+  const { username, password, window_name } = req.body;
+  const status = 'active';  // Default status is active
+  const query = 'INSERT INTO accounts (username, password, window_name, status) VALUES (?, ?, ?, ?)';
+
+  db.query(query, [username, password, window_name, status], (err, result) => {
+    if (err) {
+      console.error('Error adding account:', err);
+      return res.status(500).send('Error adding account');
+    }
+    res.status(201).json({ id: result.insertId, username, password, window_name, status });
   });
 });
 
-// 3. Update a window
-app.put('/api/windows/:id', (req, res) => {
+// Delete account
+app.delete('/api/accounts/:id', (req, res) => {
   const { id } = req.params;
-  const { status } = req.body;  // Only status should be sent in the request
-  console.log(`Received request to update window with ID: ${id}, setting status to: ${status}`);  // Log the received status
+  const query = 'DELETE FROM accounts WHERE id = ?';
 
-  const query = 'UPDATE windows SET status = ? WHERE id = ?';
-  db.query(query, [status, id], (err) => {
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      console.error('Error deleting account:', err);
+      return res.status(500).send('Error deleting account');
+    }
+    res.status(200).send('Account deleted');
+  });
+});
+
+// Update account status (Active/Inactive) using POST
+app.post('/api/accounts/status/:id', (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;  // 'active' or 'inactive'
+  const query = 'UPDATE accounts SET status = ? WHERE id = ?';
+
+  db.query(query, [status, id], (err, result) => {
     if (err) {
       console.error('Error updating status:', err);
-      return res.status(500).json({ message: 'Error updating status' });
+      return res.status(500).send('Error updating status');
     }
-    console.log(`Updated window with ID: ${id} to status: ${status}`);
-    res.json({ id, status });
+    res.status(200).send('Status updated');
   });
 });
 
-
-
-// 4. Delete a window
-app.delete('/api/windows/:id', (req, res) => {
-  const { id } = req.params;
-  const query = 'DELETE FROM windows WHERE id = ?';
-  db.query(query, [id], (err) => {
-    if (err) throw err;
-    res.status(204).send();
-  });
-});
-
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+// Start server
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
