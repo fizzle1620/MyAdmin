@@ -1,87 +1,61 @@
 const express = require('express');
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
+// Initialize the express app
 const app = express();
-const port = 5000;
-
-// MySQL database connection
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',  // Change this to your MySQL username
-  password: '',  // Change this to your MySQL password
-  database: 'window_db',  // Use the database you created
-});
-
-db.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL:', err.stack);
-    return;
-  }
-  console.log('Connected to MySQL');
-});
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
-// Get all accounts
-app.get('/api/accounts', (req, res) => {
-  db.query('SELECT * FROM accounts', (err, result) => {
-    if (err) {
-      console.error('Error fetching accounts:', err);
-      return res.status(500).send('Error fetching accounts');
-    }
-    res.json(result);
-  });
+// Create MySQL connection
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',  // Default XAMPP MySQL username
+  password: '',  // Default XAMPP MySQL password is empty
+  database: 'window_management',  // The name of your database
 });
 
-// Add new account
+db.connect((err) => {
+  if (err) throw err;
+  console.log('Connected to MySQL Database');
+});
+
+// POST route for adding an account
 app.post('/api/accounts', (req, res) => {
-  const { username, password, window_name } = req.body;
-  const status = 'active';  // Default status is active
-  const query = 'INSERT INTO accounts (username, password, window_name, status) VALUES (?, ?, ?, ?)';
-
-  db.query(query, [username, password, window_name, status], (err, result) => {
+  const { username, password, windowName } = req.body;
+  
+  // Insert data into MySQL
+  const query = 'INSERT INTO accounts (username, password, window_name) VALUES (?, ?, ?)';
+  
+  db.query(query, [username, password, windowName], (err, result) => {
     if (err) {
-      console.error('Error adding account:', err);
-      return res.status(500).send('Error adding account');
+      console.error('Error inserting account:', err);
+      return res.status(500).json({ error: 'Failed to create account' });
     }
-    res.status(201).json({ id: result.insertId, username, password, window_name, status });
+    res.status(201).json({
+      id: result.insertId,
+      username,
+      password,
+      windowName,
+    });
   });
 });
 
-// Delete account
-app.delete('/api/accounts/:id', (req, res) => {
-  const { id } = req.params;
-  const query = 'DELETE FROM accounts WHERE id = ?';
-
-  db.query(query, [id], (err, result) => {
+// Get all accounts (for displaying purposes)
+app.get('/api/accounts', (req, res) => {
+  db.query('SELECT * FROM accounts', (err, results) => {
     if (err) {
-      console.error('Error deleting account:', err);
-      return res.status(500).send('Error deleting account');
+      return res.status(500).json({ error: 'Failed to fetch accounts' });
     }
-    res.status(200).send('Account deleted');
+    res.status(200).json(results);
   });
 });
 
-// Update account status (Active/Inactive) using POST
-app.post('/api/accounts/status/:id', (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;  // 'active' or 'inactive'
-  const query = 'UPDATE accounts SET status = ? WHERE id = ?';
-
-  db.query(query, [status, id], (err, result) => {
-    if (err) {
-      console.error('Error updating status:', err);
-      return res.status(500).send('Error updating status');
-    }
-    res.status(200).send('Status updated');
-  });
-});
-
-// Start server
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+// Start the server
+const PORT = 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
