@@ -1,0 +1,25 @@
+/* Container for the Monitoring page */
+.monitoring-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+    background-color: #f4f4f4; /* Optional, for background color */
+  }
+  
+  /* Center the video inside the monitoring container */
+  .monitoring-container .video-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 900px;  /* Optional, control max width of the video */
+    max-height: 900px;  /* Optional, control max height of the video */
+  }
+  
+  /* Ensure the video maintains aspect ratio */
+  .monitoring-container .video-container video {
+    width: 100%;
+    height: auto; /* Maintain aspect ratio */
+  }
+  
